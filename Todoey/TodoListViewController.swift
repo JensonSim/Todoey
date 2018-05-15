@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    let itemArray = ["Find Mike", "Buy Egg", "Destory Dragon"]
+    var itemArray = ["Find Mike", "Buy Egg", "Destory Dragon"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +44,29 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)//바로 그레이 하이라이트가 사라지게
         
     }
+    //Mark - Add new Items
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        var alertText = UITextField()
+        let action = UIAlertAction(title: "AddItem", style: .default) { (action) in
+            //what will happen once the user clicks the add button
+            print(alertText.text!)
+            self.itemArray.append(alertText.text!)
+            print(self.itemArray)
+            self.tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
+            
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            alertText = alertTextField
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+        
+    }
     
-
+    
 }
 
