@@ -11,9 +11,14 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = ["Find Mike", "Buy Egg", "Destory Dragon"]
+    
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let items = defaults.array(forKey: "ItemArrayList") as? [String]{
+            itemArray = items
+        }
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -28,7 +33,8 @@ class TodoListViewController: UITableViewController {
         
         cell.textLabel?.text = itemArray[indexPath.row]
         
-        return cell
+        return cell // 셀을 하나 잡아서 순서대로, 아이템어레이의 순서대로 추가
+        
     }
     //Mark - Tableview Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -46,18 +52,27 @@ class TodoListViewController: UITableViewController {
     }
     //Mark - Add new Items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
         var alertText = UITextField()
+        
         let action = UIAlertAction(title: "AddItem", style: .default) { (action) in
             //what will happen once the user clicks the add button
             print(alertText.text!)
+            
             self.itemArray.append(alertText.text!)
+            self.defaults.set(self.itemArray, forKey: "ItemArrayList")
+            
             print(self.itemArray)
+            
             self.tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
             
         }
         alert.addTextField { (alertTextField) in
+            
             alertTextField.placeholder = "Create new item"
+            
             alertText = alertTextField
         }
         
