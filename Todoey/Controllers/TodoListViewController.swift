@@ -57,9 +57,9 @@ class TodoListViewController: UITableViewController {
         
         
         
-        if let items = defaults.array(forKey: "ItemArrayList") as? [Item]{
-            itemArray = items
-        }
+        //if let items = defaults.object(forKey: "ItemArrayList") as? [Item]{
+       //     itemArray = items
+        //}
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -130,7 +130,7 @@ class TodoListViewController: UITableViewController {
             
             self.itemArray.append(newItem)
             
-            self.defaults.set(self.itemArray, forKey: "ItemArrayList")
+           // self.defaults.set(self.itemArray, forKey: "ItemArrayList")
             
             self.tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
             
