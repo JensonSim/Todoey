@@ -29,11 +29,15 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoitemCell", for: indexPath)
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "ToDoitemCell")
+        
+       // let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoitemCell", for: indexPath)
         
         cell.textLabel?.text = itemArray[indexPath.row]
         
+        
         return cell // 셀을 하나 잡아서 순서대로, 아이템어레이의 순서대로 추가
+        
         
     }
     //Mark - Tableview Delegate
