@@ -11,50 +11,17 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
-    let defaults = UserDefaults.standard
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let newItem = Item()
-        newItem.title = "게임하지 않기"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "만화보지 않기"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "사업하는 척하지 않기"
-        itemArray.append(newItem3)
-        
-        let newItem4 = Item()
-        newItem4.title = "늦잠자지 않기"
-        itemArray.append(newItem4)
-        
-        let newItem7 = Item()
-        newItem7.title = "늦게자지 않기"
-        itemArray.append(newItem7)
-        
-        let newItem5 = Item()
-        newItem5.title = "오늘 하루 한일 일기쓰기"
-        itemArray.append(newItem5)
-        
-        let newItem6 = Item()
-        newItem6.title = "내일 할일 떠올리기"
-        itemArray.append(newItem6)
+        print(dataFilePath!)
         
         
-        let newItem8 = Item()
-        newItem8.title = "탈각본을 하게된 후를 상상하기"
-        itemArray.append(newItem8)
         
-        let newItem9 = Item()
-        newItem9.title = "돈과 시간의 여유가 넘치고 남으면 뭘 할지 생각하기"
-        itemArray.append(newItem9)
+       
         
-        
+        loadItems()
         
         
         //if let items = defaults.object(forKey: "ItemArrayList") as? [Item]{
@@ -102,8 +69,8 @@ class TodoListViewController: UITableViewController {
          //   itemArray[indexPath.row].done = true
         //}
         
-       tableView.reloadData()
-        
+        saveData()
+
         //if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
           //  tableView.cellForRow(at: indexPath)?.accessoryType = .none
         //} else {
@@ -121,6 +88,8 @@ class TodoListViewController: UITableViewController {
         
         var alertText = UITextField()
         
+        
+        
         let action = UIAlertAction(title: "AddItem", style: .default) { (action) in
             //what will happen once the user clicks the add button
             print(alertText.text!)
@@ -129,11 +98,8 @@ class TodoListViewController: UITableViewController {
             newItem.title = alertText.text!
             
             self.itemArray.append(newItem)
-            
-           // self.defaults.set(self.itemArray, forKey: "ItemArrayList")
-            
-            self.tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
-            
+            self.saveData()
+           
         }
         alert.addTextField { (alertTextField) in
             
@@ -147,7 +113,30 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
         
     }
+    func saveData(){
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error incoding item array")
+        }
+        tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
+        
+    }
+    
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+            itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding items!")
+            }
+    }
     
     
 }
 
+}
