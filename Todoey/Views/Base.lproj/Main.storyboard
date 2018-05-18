@@ -33,6 +33,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Todoey" id="meg-Fd-W3E">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="edit" id="hWj-i6-37H">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="editButtonPressed:" destination="bdw-qF-niR" id="lmS-Y0-mMr"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="vAd-ll-Kw6">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>

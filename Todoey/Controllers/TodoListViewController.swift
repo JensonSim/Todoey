@@ -7,20 +7,16 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-    
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(dataFilePath!)
-        
-        
-        
-       
-        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         loadItems()
         
         
@@ -70,7 +66,7 @@ class TodoListViewController: UITableViewController {
         //}
         
         saveData()
-
+        
         //if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
           //  tableView.cellForRow(at: indexPath)?.accessoryType = .none
         //} else {
@@ -81,6 +77,9 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)//바로 그레이 하이라이트가 사라지게
         
     }
+    
+    
+    
     //Mark - Add new Items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
@@ -94,8 +93,9 @@ class TodoListViewController: UITableViewController {
             //what will happen once the user clicks the add button
             print(alertText.text!)
             
-            let newItem = Item()
+            let newItem = Item(context: self.context)
             newItem.title = alertText.text!
+            newItem.done = false
             
             self.itemArray.append(newItem)
             self.saveData()
@@ -113,30 +113,43 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
         
     }
+    
+    //Mark - Update exist Items
+//    @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
+//        
+//    }
+    
+    
+    
+    //Mark - Save Item to CoreData
     func saveData(){
-        let encoder = PropertyListEncoder()
         
+
         do{
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+            try context.save()
         } catch {
-            print("Error incoding item array")
+            print("error in saving \(error)")
         }
+        
         tableView.reloadData()// tableView 는 UItableViewController 의 종속변수
         
     }
     
+    //Mark - Load Item from CoreData
     func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            do{
-            itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error decoding items!")
-            }
+        
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        do{
+            
+        itemArray = try context.fetch(request)
+            
+        } catch {
+            print("LoadError: \(error)")
+        }
     }
-    
+
     
 }
 
-}
+
