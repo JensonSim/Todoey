@@ -9,14 +9,17 @@
 import UIKit
 import CoreData
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImagePickerControllerDelegate {
     
     var itemArray = [Item]()
 //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
         loadItems()
         
         
@@ -57,21 +60,20 @@ class TodoListViewController: UITableViewController {
     }
     //Mark - Tableview Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print(item)
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        //if itemArray[indexPath.row].done == true {
-          //  itemArray[indexPath.row].done = false
-        //} else {
-         //   itemArray[indexPath.row].done = true
-        //}
+        
+        //데이터베이스에서 지워야하는거네 // 아니다 아이템어레이에서 지우면 되네 -> 둘다 지워야되네 ㅋㅋㅋㅋㅋ
+        //db만 지우면, 
+        //어레이만 지우면 일단 사라졌다가 재실행하면 다시나옴
+        context.delete(itemArray[indexPath.row])
+        itemArray.remove(at: indexPath.row)
+        
+//        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
         
         saveData()
+        tableView.reloadData()
         
-        //if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-          //  tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        //} else {
-          //  tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        //}//체크마크가없으면 체크하고 있으면 제거
+      
         
         
         tableView.deselectRow(at: indexPath, animated: true)//바로 그레이 하이라이트가 사라지게
@@ -135,20 +137,55 @@ class TodoListViewController: UITableViewController {
         
     }
     
-    //Mark - Load Item from CoreData
-    func loadItems() {
+    //Mark: - Load Item from CoreData
+    func loadItems(with request:NSFetchRequest<Item> = Item.fetchRequest()) {
         
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
         
         do{
             
         itemArray = try context.fetch(request)
             
         } catch {
-            print("LoadError: \(error)")
+            print("Error: \(error)")
         }
+        
+        tableView.reloadData()
+
     }
 
+    
+}
+
+extension TodoListViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with: request)
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+            
+        } else {
+            let request : NSFetchRequest<Item> = Item.fetchRequest()
+            
+            request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+            
+            request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+            
+            loadItems(with: request)
+        }
+    }
     
 }
 
