@@ -10,17 +10,22 @@ import UIKit
 import CoreData
 
 class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImagePickerControllerDelegate {
+    @IBOutlet weak var itemNaviTitle: UINavigationItem!
     
     var itemArray = [Item]()
 //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    
+    var selectedCategory : Category? {
+        didSet{
+            itemNaviTitle.title = selectedCategory?.name!
+            loadItems()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        loadItems()
         
         
         //if let items = defaults.object(forKey: "ItemArrayList") as? [Item]{
@@ -82,14 +87,16 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
     
     
     
+    
+    
+    
+    
     //Mark - Add new Items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .actionSheet)
         
         var alertText = UITextField()
-        
-        
         
         let action = UIAlertAction(title: "AddItem", style: .default) { (action) in
             //what will happen once the user clicks the add button
@@ -98,6 +105,7 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
             let newItem = Item(context: self.context)
             newItem.title = alertText.text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             
             self.itemArray.append(newItem)
             self.saveData()
@@ -111,7 +119,6 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
         }
         
         alert.addAction(action)
-        
         present(alert, animated: true, completion: nil)
         
     }
@@ -138,8 +145,15 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
     }
     
     //Mark: - Load Item from CoreData
-    func loadItems(with request:NSFetchRequest<Item> = Item.fetchRequest()) {
+    func loadItems(with request:NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
         
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate,additionalPredicate])
+        }else {
+            request.predicate = categoryPredicate
+        }
         
         do{
             
@@ -165,7 +179,7 @@ extension TodoListViewController: UISearchBarDelegate{
         
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request)
+        loadItems(with: request, predicate: request.predicate)
         
     }
     
@@ -183,7 +197,7 @@ extension TodoListViewController: UISearchBarDelegate{
             
             request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
             
-            loadItems(with: request)
+            loadItems(with: request, predicate: NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!))
         }
     }
     
