@@ -94,9 +94,11 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
     //Mark - Add new Items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
         
         var alertText = UITextField()
+        
+        
         
         let action = UIAlertAction(title: "AddItem", style: .default) { (action) in
             //what will happen once the user clicks the add button
@@ -119,6 +121,7 @@ class TodoListViewController: UITableViewController, UIPickerViewDelegate,UIImag
         }
         
         alert.addAction(action)
+        
         present(alert, animated: true, completion: nil)
         
     }
