@@ -7,13 +7,14 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 
 class CategoryViewController: UITableViewController {
     
-    var categoryArray = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var realm = try! Realm()
+//    var categoryArray = [AnCategory]()
+    var categoryArray: Results<AnCategory>?
     var selectedCategory:String = ""
     override func viewDidLoad() {
         
@@ -31,13 +32,13 @@ class CategoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
+        return categoryArray?.count ?? 1
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "categoryCell")
-        cell.textLabel?.text = categoryArray[indexPath.row].name!
+        cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Category Added yet"
         
         return cell
         
@@ -50,7 +51,7 @@ class CategoryViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! TodoListViewController
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
-        destinationVC.selectedCategory = categoryArray[selectedIndexPath.row]
+        destinationVC.selectedCategory = categoryArray?[selectedIndexPath.row]
         }
     }
   
@@ -60,10 +61,11 @@ class CategoryViewController: UITableViewController {
         var alertTextResult = UITextField()
         
         let action = UIAlertAction(title: "title:action", style: .default) { (action) in
-            let newCategory = Category(context:self.context) // Category가 context랑 이어진다고 하는듯?
-            newCategory.name = alertTextResult.text
-            self.categoryArray.append(newCategory)
-            self.saveItem()
+            let newCategory = AnCategory() // Category가 context랑 이어진다고 하는듯?
+            newCategory.name = alertTextResult.text!
+//            self.categoryArray.append(newCategory)
+            self.save(category: newCategory)
+
         }
         
         alert.addAction(action)
@@ -72,12 +74,14 @@ class CategoryViewController: UITableViewController {
             alertTextResult = alertTextField
         }
         present(alert, animated: true, completion: nil)
-
+        tableView.reloadData()
     }
     
-    func saveItem(){
+    func save(category: AnCategory){
         do{
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print("saving error: \(error)")
         }
@@ -86,18 +90,15 @@ class CategoryViewController: UITableViewController {
     }
     
     func loadData(){
-        let request: NSFetchRequest<Category> = Category.fetchRequest()
-        do{
-            categoryArray = try context.fetch(request)
-        } catch {
-            print("Loading data error: \(error)")
-        }
+        
+        let categoryArray = realm.objects(AnCategory.self)
         tableView.reloadData()
+    
     }
     
     
     
-    
+
     
     
 
