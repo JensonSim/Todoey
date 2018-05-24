@@ -91,7 +91,7 @@ class CategoryViewController: UITableViewController {
     
     func loadData(){
         
-        let categoryArray = realm.objects(AnCategory.self)
+        categoryArray = realm.objects(AnCategory.self)
         tableView.reloadData()
     
     }
