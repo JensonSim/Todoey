@@ -13,7 +13,7 @@ import RealmSwift
 class CategoryViewController: UITableViewController {
     
     var realm = try! Realm()
-//    var categoryArray = [AnCategory]()
+//    var categoryArray = [AnCategory]()d
     var categoryArray: Results<AnCategory>?
     var selectedCategory:String = ""
     override func viewDidLoad() {
