@@ -18,16 +18,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="cO6-eW-tnv">
-                            <rect key="frame" x="0.0" y="72" width="375" height="534"/>
+                            <rect key="frame" x="0.0" y="77" width="375" height="534"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="categoryCell" id="tY2-Rb-DK8">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="49" id="tY2-Rb-DK8" customClass="SwipeTableViewCell" customModule="SwipeCellKit">
+                                <rect key="frame" x="0.0" y="28" width="375" height="49"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tY2-Rb-DK8" id="dVm-uL-7Kl">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="48.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -39,7 +39,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Category" largeTitleDisplayMode="always" id="fvw-m6-pHn">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="oYJ-0T-Smm">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="eNP-zt-1B4" id="ptp-yy-tc2"/>
                             </connections>
@@ -71,7 +70,7 @@
                             </connections>
                         </searchBar>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="ToDoitemCell" editingAccessoryType="checkmark" id="wxM-y7-cub">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="Cell" editingAccessoryType="checkmark" id="wxM-y7-cub">
                                 <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wxM-y7-cub" id="AhS-T4-Mfk">
@@ -87,7 +86,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Todoey" id="meg-Fd-W3E">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="vAd-ll-Kw6">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="bdw-qF-niR" id="8no-Ya-qkl"/>
                             </connections>
@@ -95,6 +93,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="itemNaviTitle" destination="meg-Fd-W3E" id="Nws-9R-pTo"/>
+                        <outlet property="searchItemBar" destination="M0F-3q-aVD" id="A2s-BZ-eEL"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IIq-us-GQF" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -106,8 +105,8 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="d4W-LO-NdD" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="x8L-3g-tOc">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="x8L-3g-tOc">
+                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="barTintColor" red="0.53109401440000004" green="0.72810534810000005" blue="0.99705493450000005" alpha="0.7654644692" colorSpace="custom" customColorSpace="displayP3"/>

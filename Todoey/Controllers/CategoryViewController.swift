@@ -8,9 +8,12 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
+import ChameleonFramework
 
 
-class CategoryViewController: UITableViewController {
+
+class CategoryViewController: SwipeTableViewController {
     
     var realm = try! Realm()
 //    var categoryArray = [AnCategory]()d
@@ -23,6 +26,8 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
         
         loadData()
+        
+        tableView.separatorStyle = .none
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -34,18 +39,30 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categoryArray?.count ?? 1
     }
-    
-    
+    //MARK - SwipeTable
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
+//        cell.delegate = self
+//        return cell
+//    }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "categoryCell")
-        cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Category Added yet"
-        
+//        let cell = SwipeTableViewCell(style: .default, reuseIdentifier: "Cell")
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        if let category = categoryArray?[indexPath.row]{
+            cell.textLabel?.text = category.name
+            cell.backgroundColor = UIColor(hexString: category.color)
+            cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)            
+
+        }
         return cell
         
     }
     
+    
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.performSegue(withIdentifier: "gotoItemView", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -63,6 +80,8 @@ class CategoryViewController: UITableViewController {
         let action = UIAlertAction(title: "title:action", style: .default) { (action) in
             let newCategory = AnCategory() // Category가 context랑 이어진다고 하는듯?
             newCategory.name = alertTextResult.text!
+            newCategory.color = UIColor.randomFlat.hexValue()
+            newCategory.color = UIColor(randomFlatColorOf : .light).hexValue()
 //            self.categoryArray.append(newCategory)
             self.save(category: newCategory)
 
@@ -89,6 +108,11 @@ class CategoryViewController: UITableViewController {
         
     }
     
+//    func delete(){
+//
+//
+//    }
+    
     func loadData(){
         
         categoryArray = realm.objects(AnCategory.self)
@@ -96,11 +120,27 @@ class CategoryViewController: UITableViewController {
     
     }
     
-    
-    
-
-    
-    
-
+    override func updateModel(at indexPath: IndexPath) {
+        super .updateModel(at: indexPath)
+        
+        if let categoryDeletion = self.categoryArray?[indexPath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(categoryDeletion)
+                    //                    item.done = !item.done
+                    
+                }
+                
+            } catch {
+                print("\(error)")
+                
+            }
+            
+        }
+    }
 
 }
+
+
+//MARK: - Swipe Cell Delegate Methods
+
